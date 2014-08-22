@@ -319,6 +319,16 @@ public class MongoQuery extends Query implements QueryArgumentsAware {
             }
         });
 
+        QueryHandler<Text> textHandler = new QueryHandler<Text>() {
+            public void handle(Session session, Text text, DBObject query, PersistentEntity entity) {
+                DBObject textQuery = new BasicDBObject();
+                textQuery.put("$search", text.getSearch());
+                //TODO implement language param
+                query.put("$text", textQuery);
+            }
+        };
+        queryHandlers.put(Text.class, textHandler);
+
         QueryHandler<Near> nearHandler = new QueryHandler<Near>() {
             public void handle(Session session, Near near, DBObject query, PersistentEntity entity) {
                 DBObject nearQuery = new BasicDBObject();
@@ -1362,6 +1372,44 @@ public class MongoQuery extends Query implements QueryArgumentsAware {
      */
     public void setArguments(Map arguments) {
         this.queryArguments = arguments;
+    }
+
+
+    /**
+     * Used for full-text-search querying
+     *
+     * @author Patrick Huetter
+     * @since 1.0 //TODO
+     */
+    public static class Text implements Criterion {
+
+        protected String search;
+        protected String language = null;
+
+        public Text(String search, String language) {
+            this.search = search;
+            this.language = language;
+        }
+
+        public Text(String search) {
+            this.search = search;
+        }
+
+        public String getSearch() {
+            return search;
+        }
+
+        public void setSearch(String search) {
+            this.search = search;
+        }
+
+        public String getLanguage() {
+            return language;
+        }
+
+        public void setLanguage(String language) {
+            this.language = language;
+        }
     }
 
     /**

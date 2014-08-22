@@ -51,6 +51,32 @@ public class MongoCriteriaBuilder extends CriteriaBuilder {
         super(targetClass, session);
     }
 
+
+    /**
+     * Full-text-search Query for text-index
+     *
+     * @param search The word or words to search for
+     * @param language The language setting
+     * @return this Criterion
+     */
+    public Criteria text(String search, String language) {
+        validatePropertyName(search, "text");
+        addToCriteria(new MongoQuery.Text(search, language));
+        return this;
+    }
+
+    /**
+     * Full-text-search Query for text-index
+     *
+     * @param search The word or words to search for
+     * @return this Criterion
+     */
+    public Criteria text(String search) {
+        validatePropertyName(search, "text");
+        addToCriteria(new MongoQuery.Text(search));
+        return this;
+    }
+
     /**
      * Geospacial query for values near the given two dimensional list
      *
